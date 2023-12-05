@@ -130,3 +130,5 @@ dist
 homebridge-ui/
 
 TODO
+.DS_Store
+.idea
