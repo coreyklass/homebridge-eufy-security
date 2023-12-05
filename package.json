@@ -53,6 +53,7 @@
     "bunyan-debug-stream": "^2.0.1",
     "eufy-security-client": "2.4.0",
     "ffmpeg-for-homebridge": "0.1.4",
+    "http": "^0.0.1-security",
     "pick-port": "^1.0.1",
     "rotating-file-stream": "^3.0.4",
     "tslog": "^3.3.4",
