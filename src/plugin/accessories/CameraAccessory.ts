@@ -11,6 +11,7 @@ import { Camera, Device, PropertyName, CommandName, VideoCodec } from 'eufy-secu
 import { StreamingDelegate } from '../controller/streamingDelegate';
 
 import { CameraConfig, VideoConfig } from '../utils/configTypes';
+import {get, IncomingMessage} from "http";
 
 /**
  * Platform Accessory
@@ -23,6 +24,8 @@ export class CameraAccessory extends DeviceAccessory {
   protected CameraService: Service;
 
   public readonly cameraConfig: CameraConfig;
+
+//   readonly doorbellUrl = 'http://localhost:8181/doorbell?Front%20Yard%20Camera';
 
   protected streamingDelegate: StreamingDelegate | null = null;
 
@@ -43,23 +46,6 @@ export class CameraAccessory extends DeviceAccessory {
 
     this.cameraConfig = this.getCameraConfig();
     this.platform.log.debug(this.accessory.displayName, 'config is:', this.cameraConfig);
-
-    if (this.cameraConfig.enableCamera || (typeof this.eufyDevice.isDoorbell === 'function' && this.eufyDevice.isDoorbell())) {
-      this.platform.log.debug(this.accessory.displayName, 'has a camera');
-
-      try {
-        this.CameraService = this.cameraFunction(accessory);
-        this.CameraService.setPrimaryService(true);
-        const delegate = new StreamingDelegate(this.platform, eufyDevice, this.cameraConfig, this.platform.api, this.platform.api.hap);
-        this.streamingDelegate = delegate;
-        accessory.configureController(delegate.controller);
-      } catch (Error) {
-        this.platform.log.error(this.accessory.displayName, 'raise error to check and attach livestream function.', Error);
-      }
-      
-    } else {
-      this.platform.log.debug(this.accessory.displayName, 'has a motion sensor.');
-    }
 
     try {
       this.service = this.motionFunction(accessory);
@@ -324,19 +310,19 @@ export class CameraAccessory extends DeviceAccessory {
     service
       .getCharacteristic(this.characteristic.MotionDetected)
       .onGet(this.handleMotionDetectedGet.bind(this));
-
+/*
     this.eufyDevice.on('motion detected', (device: Device, motion: boolean) =>
       this.onDeviceMotionDetectedPushNotification(device, motion),
     );
-
+*/
     this.eufyDevice.on('person detected', (device: Device, motion: boolean) =>
       this.onDeviceMotionDetectedPushNotification(device, motion),
     );
-
+/*
     this.eufyDevice.on('pet detected', (device: Device, motion: boolean) =>
       this.onDeviceMotionDetectedPushNotification(device, motion),
     );
-
+*/
     return service as Service;
   }
 
@@ -374,6 +360,14 @@ export class CameraAccessory extends DeviceAccessory {
     this.service
       .getCharacteristic(this.characteristic.MotionDetected)
       .updateValue(motion);
+
+    if (motion) {
+/*
+      const http = get(this.doorbellUrl, (res: IncomingMessage) => {
+        // do nothing on receipt
+      });
+*/
+    }
   }
 
   async handleEnableGet(): Promise<CharacteristicValue> {
